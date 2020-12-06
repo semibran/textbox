@@ -10,7 +10,7 @@ SHELL := /bin/bash
 
 dev: NODE_ENV=true
 
-all: clean
+all: clean sprites
 	esbuild src/index.js --bundle --minify --outfile=dist/index.js
 	html-minifier --collapse-whitespace src/index.html -o dist/index.html
 
@@ -30,4 +30,4 @@ sprites:
 
 clean:
 	rm -rf dist
-	mkdir dist
+	mkdir -p dist/tmp
