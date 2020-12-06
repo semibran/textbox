@@ -1,5 +1,5 @@
 import Store from './lib/store'
-import patch from './patch'
+import patch from './lib/patch'
 import { view } from './view'
 
 const $main = document.querySelector('main')

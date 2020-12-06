@@ -11,15 +11,23 @@ SHELL := /bin/bash
 dev: NODE_ENV=true
 
 all: clean
-	esbuild src/index.js --bundle --minify --outfile=public/index.js
-	html-minifier --collapse-whitespace src/index.html -o public/index.html
+	esbuild src/index.js --bundle --minify --outfile=dist/index.js
+	html-minifier --collapse-whitespace src/index.html -o dist/index.html
+
+watch: clean sprites js html
+	chokidar "src/**/*.js" -c "make js" \
+	& chokidar "src/**/*.html" -c "make html" \
+	& chokidar "src/**/*.png" -c "make sprites js"
 
 html:
-	cp src/index.html public/index.html
+	cp src/index.html dist/index.html
 
 js:
-	esbuild src/index.js --bundle --sourcemap --outfile=public/index.js
+	esbuild src/index.js --bundle --sourcemap --outfile=dist/index.js
+
+sprites:
+	node bin/sprites.js $(shell find src/sprites -type f -name '*.png')
 
 clean:
-	rm -rf public
-	mkdir public
+	rm -rf dist
+	mkdir dist

@@ -8,11 +8,15 @@
   "main": "src/index.html",
   "keywords": [],
   "devDependencies": {
+    "chokidar-cli": "^2.1.0",
     "esbuild": "^0.8.9",
     "eslint": "^7.15.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1"
+    "eslint-plugin-promise": "^4.2.1",
+    "html-minifier": "^4.0.0",
+    "jimp": "^0.16.1",
+    "pack": "^2.2.0"
   }
 }
