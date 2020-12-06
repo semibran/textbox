@@ -2,7 +2,12 @@
   margin: 0;
 }
 
+body {
+  overflow: hidden;
+}
+
 main {
+  background: black;
   transform-origin: top left;
   image-rendering: pixelated;
 }

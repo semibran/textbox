@@ -1,5 +1,5 @@
 import { main } from './lib/vdom'
-import { Text } from './view/render-text'
+import { Text } from './render/text'
 
 export const view = (state, dispatch) =>
   main(Text('Hello world!'))

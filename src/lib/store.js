@@ -1,9 +1,15 @@
-export default function Store ({ state, actions, update }) {
+export default function Store ({ state, actions }) {
+  const listeners = []
   const patches = JSON.parse(window.localStorage.patches || null) || []
   if (patches.length) {
     state = revert(state, patches)
   } else {
     state = { ...state }
+  }
+
+  const listen = (fn) => {
+    listeners.push(fn)
+    fn(state, dispatch)
   }
 
   const dispatch = (cmdname, ...cmdargs) => {
@@ -16,11 +22,12 @@ export default function Store ({ state, actions, update }) {
     Object.assign(state, patch)
     patches.push(patch)
     window.localStorage.patches = JSON.stringify(patches) // assumes state is serializable!
-    if (update) update(state, dispatch)
+    for (const fn of listeners) {
+      fn(state, dispatch)
+    }
   }
 
-  if (update) update(state, dispatch)
-  return dispatch
+  return { listen, dispatch }
 }
 
 // revert(state, patch[]) -> state

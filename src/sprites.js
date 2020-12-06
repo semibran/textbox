@@ -7,7 +7,7 @@ import * as fontdata from './fonts'
 export let sprites = null
 export let fonts = null
 
-export async function init (path) {
+export async function load (path) {
   const sheet = await loadImage(path)
   const images = disasm(sheet, srcmap)
   sprites = {}
