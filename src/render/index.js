@@ -1,6 +1,7 @@
 import cssify from 'css-string'
 import patch from '../lib/patch'
 import Box from './box'
+import Tag from './tag'
 import { view } from '../view'
 
 const $main = document.querySelector('main')
@@ -17,10 +18,6 @@ export const render = (state, dispatch) => {
     }
   })
   patch($main, view(state, dispatch))
-  const box = Box(24, 24)
-  const cvs = document.querySelector('.box')
-  cvs.width = box.width
-  cvs.height = box.height
-  cvs.getContext('2d')
-    .drawImage(box, 0, 0)
+  $main.appendChild(Box(32, 24))
+  $main.appendChild(Tag(57, 12))
 }
