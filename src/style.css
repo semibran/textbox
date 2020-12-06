@@ -1,0 +1,8 @@
+* {
+  margin: 0;
+}
+
+main {
+  transform-origin: top left;
+  image-rendering: pixelated;
+}

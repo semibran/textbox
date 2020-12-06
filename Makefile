@@ -10,17 +10,21 @@ SHELL := /bin/bash
 
 dev: NODE_ENV=true
 
-all: clean sprites
+all: clean sprites css
 	esbuild src/index.js --bundle --minify --outfile=dist/index.js
 	html-minifier --collapse-whitespace src/index.html -o dist/index.html
 
-watch: clean sprites js html
+watch: clean sprites js css html
 	chokidar "src/**/*.js" -c "make js" \
+	& chokidar "src/**/*.css" -c "make css" \
 	& chokidar "src/**/*.html" -c "make html" \
 	& chokidar "src/**/*.png" -c "make sprites js"
 
 html:
-	cp src/index.html dist/index.html
+	cp src/index.html dist
+
+css:
+	cp src/style.css dist
 
 js:
 	esbuild src/index.js --bundle --sourcemap --outfile=dist/index.js

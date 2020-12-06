@@ -4,7 +4,8 @@
 const EMPTY_OBJ = {}
 const h = tag => (data, content) => {
   // perform arg switch if first arg is an array or primitive
-  if (data === undefined || Array.isArray(data) || typeof data !== 'object') {
+  if (data === undefined || typeof data !== 'object' ||
+  data instanceof window.Element || Array.isArray(data)) {
     content = data
     data = EMPTY_OBJ
   }
