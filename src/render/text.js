@@ -1,15 +1,23 @@
-import { fonts } from '../sprites'
+import { fonts, palette } from '../sprites'
 import { create as Canvas } from '../lib/canvas'
 import findTextWidth from '../lib/find-textwidth'
+import makeCharmap from '../disasm/charmap'
 
-export const Text = (content, style, width) => {
-  style = Object.assign({ font: fonts.seven }, style)
+export default function Text (content, style, width) {
+  style = Object.assign({
+    font: fonts.seven,
+    color: palette.white
+  }, style)
   const font = style.font
   if (!font) {
     throw new Error('Attempting to render an unregistered font.' +
       ' Is your font exported by fonts/index.js?')
   }
-  const charmap = font.charmap
+  let charmap = font.cache[style.color]
+  if (!charmap) {
+    charmap = makeCharmap(font.image, font.data, style.color)
+    font.cache[style.color] = charmap
+  }
   content = content.toString()
   if (!width) {
     width = findTextWidth(content, font, style.stroke)

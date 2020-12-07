@@ -1,10 +1,9 @@
-import { main, canvas } from './lib/vdom'
-import { Text } from './render/text'
+import { main } from './lib/vdom'
+import Text from './render/text'
 
 export const view = (state, dispatch) =>
   main([
-    Text('Hello world!'),
-    canvas({ class: 'box' })
+    Text('Hello world!')
   ])
 
 // when i say Text in my DOM tree, i actually mean

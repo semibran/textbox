@@ -1,5 +1,4 @@
-import recolor from '../lib/canvas-recolor'
-import extract from 'img-extract'
+import makeCharmap from './charmap'
 
 export default function disasmFonts (images, fonts) {
   const result = {}
@@ -9,40 +8,8 @@ export default function disasmFonts (images, fonts) {
     result[font.id] = {
       image,
       data: font,
-      charmap: makeCharmap(image, font)
+      cache: { '255,255,255,255': makeCharmap(image, font) }
     }
   }
   return result
-}
-
-function makeCharmap (image, font, color, stroke) {
-  if (!image) {
-    throw new Error('No image found for font ' +
-      font.id + '. Try rebuilding your spritesheet.')
-  }
-  const charmap = {}
-  const cols = image.width / font.cellwidth
-  const rows = image.height / font.cellheight
-  if (color) {
-    image = recolor(image, color)
-  }
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      const char = font.layout[row][col]
-      if (!char) continue
-      const size = {
-        width: font.charwidth,
-        height: font.charheight
-      }
-      const offsets = font.exceptions[char]
-      for (const axis in offsets) {
-        size[axis] = offsets[axis]
-      }
-      const x = col * font.cellwidth
-      const y = row * font.cellheight
-      const base = extract(image, x, y, size.width, size.height)
-      charmap[char] = base
-    }
-  }
-  return charmap
 }

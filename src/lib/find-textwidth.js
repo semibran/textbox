@@ -5,7 +5,7 @@ export default function findTextWidth (content, font) {
       width += font.data.wordspace
       continue
     }
-    const cache = font.charmap
+    const cache = font.cache['255,255,255,255']
     let image = cache[char]
     if (!image) image = cache[char.toUpperCase()]
     if (!image) continue
