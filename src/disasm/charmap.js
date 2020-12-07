@@ -1,7 +1,15 @@
 import recolor from '../lib/canvas-recolor'
 import extract from 'img-extract'
 
-export default function makeCharmap (image, font, color, stroke) {
+export { get, make }
+
+function get (font, color) {
+  if (font.cache[color]) return font.cache[color]
+  font.cache[color] = make(font.image, font.data, color)
+  return font.cache[color]
+}
+
+function make (image, font, color, stroke) {
   if (!image) {
     throw new Error('No image found for font ' +
       font.id + '. Try rebuilding your spritesheet.')

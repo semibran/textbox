@@ -1,4 +1,4 @@
-import makeCharmap from './charmap'
+import { make as makeCharmap } from './charmap'
 
 export default function disasmFonts (images, fonts) {
   const result = {}

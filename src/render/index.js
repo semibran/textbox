@@ -1,6 +1,5 @@
 import cssify from 'css-string'
 import patch from '../lib/patch'
-import TextBox from './textbox'
 import { view } from '../view'
 
 const $main = document.querySelector('main')
@@ -17,9 +16,4 @@ export const render = (state, dispatch) => {
     }
   })
   patch($main, view(state, dispatch))
-  $main.appendChild(TextBox(
-    'Jimbo',
-    'Let\'s say, hypothetically, everything was fine',
-    160
-  ))
 }
