@@ -13,15 +13,17 @@ main {
 }
 
 canvas {
+  left: 50%;
+  transform: translateX(-50%);
   animation: slideup 0.25s;
 }
 
 @keyframes slideup {
   from {
-    transform: translateY(100%)
+    transform: translate(-50%, 100%);
   }
 
   to {
-    transform: translateY(0)
+    transform: translate(-50%, 0);
   }
 }

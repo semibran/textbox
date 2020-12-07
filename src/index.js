@@ -59,8 +59,8 @@ init(async (state, dispatch) => {
   window.addEventListener('resize', _ => dispatch('resize'))
 
   setTimeout(_ => {
-    const draw = TextBox('Jimbo',
-      'Pee pee poo poo', state.viewport.width - 8)
+    const width = Math.min(240, state.viewport.width - 8)
+    const draw = TextBox('Jimbo', 'Pee pee poo poo', width)
     const textbox = draw()
     document.querySelector('main').appendChild(textbox)
     textbox.addEventListener('animationend', function update () {
