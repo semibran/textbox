@@ -1,8 +1,21 @@
 import { create as Canvas } from '../lib/canvas'
 import rgb from '../lib/rgb'
-import { tags } from '../sprites'
+import Text from './text'
+import { tags, palette } from '../sprites'
 
-export default function renderTag (width, height, faction) {
+export default function renderNameTag (name, faction) {
+  const pady = 2
+  const text = Text(name, { shadow: palette.jet })
+  const width = 52
+  const height = pady + text.height - 1 + pady
+  const tag = renderTag(width, height, faction)
+    .getContext('2d')
+  const x = Math.ceil(width / 2 - (text.width - 1) / 2)
+  tag.drawImage(text, x, pady)
+  return tag.canvas
+}
+
+function renderTag (width, height, faction) {
   if (!faction) faction = 'default'
   const palette = tags[faction].palette
   const tag = Canvas(width + 1, height)

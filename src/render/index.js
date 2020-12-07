@@ -21,6 +21,6 @@ export const render = (state, dispatch) => {
   })
   patch($main, view(state, dispatch))
   $main.appendChild(Box(32, 24))
-  $main.appendChild(Tag(57, 12))
+  $main.appendChild(Tag('Jimbo'))
   $main.appendChild(Text('hello', { color: palette.red }))
 }
