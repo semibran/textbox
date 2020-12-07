@@ -7,9 +7,12 @@ export default function Store ({ state, actions }) {
     state = { ...state }
   }
 
+  const init = (fn) => {
+    fn(state, dispatch)
+  }
+
   const listen = (fn) => {
     listeners.push(fn)
-    fn(state, dispatch)
   }
 
   const dispatch = (cmdname, ...cmdargs) => {
@@ -27,7 +30,7 @@ export default function Store ({ state, actions }) {
     }
   }
 
-  return { listen, dispatch }
+  return { init, listen, dispatch }
 }
 
 // revert(state, patch[]) -> state

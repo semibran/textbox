@@ -8,9 +8,16 @@ const units = [
   { name: 'Orc', cell: [7, 2], faction: 'enemy' }
 ]
 
-const { listen, dispatch } = Store({
+const { init, listen } = Store({
   state: {
     screen: 'game',
+    scene: {
+      index: 0,
+      actors: ['Jimbo'],
+      script: [
+        [0, 'helo..... Gamer\'s....']
+      ]
+    },
     game: {
       select: null,
       width: 9,
@@ -45,21 +52,21 @@ const { listen, dispatch } = Store({
   }
 })
 
-;(async function main () {
+init(async (state, dispatch) => {
   await load('./sprites.png')
-  const textbox = TextBox('Jimbo',
-    'Let\'s say, hypothetically, everything was fine.', 152)
-  const canvas = textbox()
-
   listen(render)
   dispatch('resize')
   window.addEventListener('resize', _ => dispatch('resize'))
 
   setTimeout(_ => {
-    document.querySelector('main').appendChild(canvas)
-    canvas.addEventListener('animationend', function update () {
-      textbox()
-      window.requestAnimationFrame(update)
+    const draw = TextBox('Jimbo',
+      'Pee pee poo poo', state.viewport.width - 8)
+    const textbox = draw()
+    document.querySelector('main').appendChild(textbox)
+    textbox.addEventListener('animationend', function update () {
+      if (draw()) {
+        window.requestAnimationFrame(update)
+      }
     })
   }, 500)
-})()
+})
