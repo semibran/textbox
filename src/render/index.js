@@ -13,6 +13,10 @@ export const render = (state, dispatch) => {
       width: width + 'px',
       height: height + 'px',
       transform: `scale(${scale})`
+    },
+    canvas: {
+      position: 'absolute',
+      bottom: 0
     }
   })
   patch($main, view(state, dispatch))
