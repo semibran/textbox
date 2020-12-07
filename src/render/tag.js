@@ -7,7 +7,7 @@ export default function renderNameTag (name, faction) {
   const pady = 2
   const text = Text(name, { shadow: palette.jet })
   const width = 52
-  const height = pady + text.height - 1 + pady
+  const height = pady + text.height - 2 + pady
   const tag = renderTag(width, height, faction)
     .getContext('2d')
   const x = Math.ceil(width / 2 - (text.width - 1) / 2)

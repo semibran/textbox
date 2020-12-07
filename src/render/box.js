@@ -2,7 +2,7 @@ import { palette } from '../sprites'
 import { create as Canvas } from '../lib/canvas'
 import rgb from '../lib/rgb'
 
-export default function renderBox (width, height) {
+export default function Box (width, height) {
   const box = Canvas(width + 2, height + 2)
   box.fillStyle = rgb(...palette.brown)
   box.fillRect(0, 1, width + 2, height)

@@ -1,9 +1,6 @@
 import cssify from 'css-string'
 import patch from '../lib/patch'
-import Box from './box'
-import Tag from './tag'
-import Text from './text'
-import { palette } from '../sprites'
+import TextBox from './textbox'
 import { view } from '../view'
 
 const $main = document.querySelector('main')
@@ -20,7 +17,9 @@ export const render = (state, dispatch) => {
     }
   })
   patch($main, view(state, dispatch))
-  $main.appendChild(Box(32, 24))
-  $main.appendChild(Tag('Jimbo'))
-  $main.appendChild(Text('hello', { color: palette.red }))
+  $main.appendChild(TextBox(
+    'Jimbo',
+    'Let\'s say, hypothetically, everything was fine',
+    160
+  ))
 }

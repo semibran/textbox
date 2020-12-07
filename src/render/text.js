@@ -1,10 +1,10 @@
 import { fonts, palette } from '../sprites'
 import { create as Canvas } from '../lib/canvas'
-import findTextWidth from '../lib/find-textwidth'
+import findTextWidth from '../lib/text-width'
 import drawShadow from '../lib/style-shadow'
 import makeCharmap from '../disasm/charmap'
 
-export default function Text(content, style, width) {
+export default function Text (content, style, width) {
   style = Object.assign({
     font: fonts.seven,
     color: palette.white,
