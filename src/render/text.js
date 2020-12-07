@@ -1,12 +1,14 @@
 import { fonts, palette } from '../sprites'
 import { create as Canvas } from '../lib/canvas'
 import findTextWidth from '../lib/find-textwidth'
+import drawShadow from '../lib/style-shadow'
 import makeCharmap from '../disasm/charmap'
 
-export default function Text (content, style, width) {
+export default function Text(content, style, width) {
   style = Object.assign({
     font: fonts.seven,
-    color: palette.white
+    color: palette.white,
+    shadow: null
   }, style)
   const font = style.font
   if (!font) {
@@ -43,5 +45,9 @@ export default function Text (content, style, width) {
     text.drawImage(image, x, 0)
     x += image.width + kerning
   }
-  return text.canvas
+  if (style.shadow) {
+    return drawShadow(text.canvas, style.shadow)
+  } else {
+    return text.canvas
+  }
 }
