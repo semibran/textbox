@@ -48,17 +48,18 @@ const { listen, dispatch } = Store({
 ;(async function main () {
   await load('./sprites.png')
   const textbox = TextBox('Jimbo',
-    'Let\'s say, hypothetically, everything was fine.', 160)
+    'Let\'s say, hypothetically, everything was fine.', 152)
   const canvas = textbox()
 
   listen(render)
   dispatch('resize')
   window.addEventListener('resize', _ => dispatch('resize'))
-  document.querySelector('main')
-    .appendChild(canvas)
 
-  window.setTimeout(function update () {
-    textbox()
-    window.requestAnimationFrame(update)
+  setTimeout(_ => {
+    document.querySelector('main').appendChild(canvas)
+    canvas.addEventListener('animationend', function update () {
+      textbox()
+      window.requestAnimationFrame(update)
+    })
   }, 500)
 })()

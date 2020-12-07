@@ -11,3 +11,17 @@ main {
   transform-origin: top left;
   image-rendering: pixelated;
 }
+
+canvas {
+  animation: slideup 0.25s;
+}
+
+@keyframes slideup {
+  from {
+    transform: translateY(100%)
+  }
+
+  to {
+    transform: translateY(0)
+  }
+}

@@ -15,7 +15,7 @@ export default function TextBox (name, content, width) {
   const innerwidth = width - xpad * 2
   const lines = split(content, font.data, innerwidth)
   const height = (font.data.cellheight + font.data.linespace) * 2 + ypad * 2
-  const box = Box(width - 1, height - 1)
+  const box = Box(width - 2, height - 2)
   const tag = Tag(name)
   // const texts = lines.map(line => Text(line, style))
 
