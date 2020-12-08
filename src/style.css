@@ -18,7 +18,7 @@ main {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  animation: slideup 0.25s;
+  animation: slideup 0.5s;
 }
 
 @keyframes slideup {

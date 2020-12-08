@@ -2,6 +2,7 @@ import { get as getCharmap } from '../disasm/charmap'
 import { create as Canvas, copy } from '../lib/canvas'
 import recolor from '../lib/canvas-recolor'
 import split from '../lib/text-split'
+import rgb from '../lib/rgb'
 import { fonts, palette } from '../sprites'
 import Box from './box'
 import Tag from './tag'
@@ -13,7 +14,6 @@ export default function TextBox (name, content, width) {
   const font = fonts.seven
 
   const innerwidth = width - xpad * 2
-  const lines = split(content, font.data, innerwidth)
   const height = (font.data.cellheight + font.data.linespace) * 2 + ypad * 2
   const box = Box(width - 2, height - 2)
   const tag = Tag(name)
@@ -22,18 +22,16 @@ export default function TextBox (name, content, width) {
   textbox.drawImage(recolor(copy(tag).canvas, palette.taupe), 6, 1)
   textbox.drawImage(tag, 6, 0)
 
-  let i = -1
-  let x = xpad
-  let y = tag.height - 2 + ypad
-  let col = 0
-  let row = 0
   const charmap = getCharmap(font, palette.jet)
   const shadowmap = getCharmap(font, palette.taupe)
+  let i, x, y, col, row, lines
+  load(content)
 
-  return function write () {
+  return { canvas: textbox.canvas, write, load }
+
+  function write () {
     const char = content[i++]
-    if (i === 0) return textbox.canvas
-    if (!char) return null
+    if (!char) return false
     if (char === ' ') {
       x += font.data.wordspace
     } else {
@@ -55,6 +53,22 @@ export default function TextBox (name, content, width) {
       col = 0
       row++
     }
-    return textbox.canvas
+    return true
+  }
+
+  function load(text) {
+    clear()
+    i = 0
+    x = xpad
+    y = tag.height - 2 + ypad
+    col = 0
+    row = 0
+    content = text
+    lines = split(content, font.data, innerwidth)
+  }
+
+  function clear() {
+    textbox.fillStyle = rgb(...palette.beige)
+    textbox.fillRect(xpad, ypad + tagoffset + 1, width - xpad * 2, height - ypad * 2 + 1)
   }
 }

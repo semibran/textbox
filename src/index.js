@@ -18,7 +18,8 @@ const { init, listen } = Store({
       actors: ['???'],
       script: [
         [0, 'Hi! Let\'s write some text.'],
-        [0, 'Here\'s some long text that displays on two lines.']
+        [0, 'Here\'s some long text that displays on two lines.'],
+        [0, 'We can write even more text and hope it doesn\'t go offscreen.']
       ]
     },
     game: {
@@ -41,9 +42,11 @@ const { init, listen } = Store({
   },
   actions: {
     update: (state) =>
-      ({ ...state, time: state.time + 1 }),
+      ({ time: state.time + 1 }),
+
     switchscr: (state, _, [newscr]) =>
       ({ screen: newscr }),
+
     resize: ({ viewport }) => {
       const minhscale = Math.floor(window.innerWidth / viewport.native.width)
       const minvscale = Math.floor(window.innerHeight / viewport.native.height)
@@ -53,10 +56,6 @@ const { init, listen } = Store({
       const width = Math.ceil(window.innerWidth / scale)
       const height = Math.ceil(window.innerHeight / scale)
       return { viewport: { ...viewport, width, height, scale } }
-    },
-
-    click: (_, dispatch) => {
-      dispatch('advance')
     },
 
     initscene: ({ scene, viewport }) => {
@@ -72,10 +71,8 @@ const { init, listen } = Store({
     // otherwise, tries to go to the next page
     // if no next page exists, does nothing
     advance: ({ scene }) => {
-      const next = scene.script[scene.index + 1]
-      if (!next) return { scene }
-      if (scene.writing && next) return { scene: { ...scene, writing: false } }
-      if (scene.writing) return { scene: { ...scene, writing: false, done: true } }
+      if (!scene.script[scene.index + 1]) return { scene }
+      if (scene.writing) return { scene: { ...scene, writing: false } }
       return { scene: { ...scene, index: scene.index + 1 } }
     }
   }

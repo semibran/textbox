@@ -28,6 +28,7 @@ export default function Store ({ state, actions }) {
     for (const fn of listeners) {
       fn(state, dispatch)
     }
+    return patch
   }
 
   return { init, listen, dispatch }
