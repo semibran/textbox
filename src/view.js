@@ -9,14 +9,17 @@ const $main = document.querySelector('main')
 const $style = document.createElement('style')
 document.head.appendChild($style)
 
-let inited = false
 let textbox = null
 let writing = true
+let animating = false
+let speakerid = null
+let index = 0
 let offset = 0
 let arrow = null
 let mask = null
 
 export function render (state) {
+  if (animating) return false
   if (writing) {
     writing = textbox.write()
   } else {
@@ -32,9 +35,7 @@ export function render (state) {
   }
 }
 
-export function init (state, dispatch) {
-  inited = true
-
+export function init (state, dispatch, listen) {
   const viewport = state.viewport
   const { width, height, scale } = viewport
   $style.innerHTML = cssify({
@@ -46,11 +47,12 @@ export function init (state, dispatch) {
   })
 
   const scene = state.scene
-  const [speakerid, content] = scene.script[scene.index]
-  const speaker = scene.actors[speakerid]
+  const [id, content] = scene.script[scene.index]
+  const speaker = scene.actors[id]
   const boxwidth = Math.min(200, viewport.width - 8)
   textbox = TextBox(speaker, content, boxwidth)
   textbox.canvas.className = 'textbox'
+  speakerid = id
 
   // cache black arrow with a brown shadow
   arrow = vshadow(recolor(copy(icons.arrow).canvas, palette.jet), palette.taupe)
@@ -59,21 +61,58 @@ export function init (state, dispatch) {
   mask = recolor(copy(arrow).canvas, palette.beige)
 
   setTimeout(_ => {
-    $main.appendChild(textbox.canvas)
+    listen('update', render)
+    listen('advance', onadvance)
 
-    textbox.canvas.addEventListener('animationend', function update () {
+    function update () {
       dispatch('update')
-      render(state)
       window.requestAnimationFrame(update)
+    }
+
+    const $textbox = textbox.canvas
+    $main.appendChild($textbox)
+    animating = true
+    $textbox.classList.add('-enter')
+    $textbox.addEventListener('animationend', function onend () {
+      $textbox.removeEventListener('animationend', onend)
+      $textbox.classList.remove('-enter')
+      animating = false
+      update()
     })
 
-    window.addEventListener('click', _ => {
-      const idx = scene.index
-      const newidx = dispatch('advance').scene.index
-      if (newidx === idx) return
-      const [speakerid, content] = scene.script[newidx]
-      writing = true
-      textbox.load(content)
-    })
+    window.addEventListener('resize', _ => dispatch('resize'))
+    window.addEventListener('click', _ => dispatch('advance'))
   }, 500)
+}
+
+function onadvance ({ scene }) {
+  if (scene.index === index) return
+  index = scene.index
+  const [id, content] = scene.script[scene.index]
+  if (speakerid !== id) {
+    speakerid = id
+
+    const $textbox = textbox.canvas
+    animating = true
+    $textbox.classList.add('-exit')
+    $textbox.addEventListener('animationend', function onend () {
+      $textbox.removeEventListener('animationend', onend)
+      $textbox.classList.remove('-exit')
+
+      const speaker = scene.actors[id]
+      textbox.rename(speaker)
+      textbox.load(content)
+
+      $textbox.classList.add('-enter')
+      $textbox.addEventListener('animationend', function onend () {
+        $textbox.removeEventListener('animationend', onend)
+        $textbox.classList.remove('-enter')
+        animating = false
+        writing = true
+      })
+    })
+  } else {
+    textbox.load(content)
+    writing = true
+  }
 }

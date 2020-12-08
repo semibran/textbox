@@ -1,5 +1,5 @@
 import Store from './lib/store'
-import { render, init as initview } from './view'
+import { init as initview } from './view'
 import { load } from './sprites'
 
 const units = [
@@ -13,13 +13,13 @@ const { init, listen } = Store({
     screen: 'game',
     scene: {
       index: 0,
-      writing: false,
+      writing: true,
       done: false,
-      actors: ['???'],
+      actors: ['???', 'Dodo'],
       script: [
         [0, 'Hi! Let\'s write some text.'],
         [0, 'Here\'s some long text that displays on two lines.'],
-        [0, 'We can write even more text and hope it doesn\'t go offscreen.']
+        [1, 'When someone else talks, the text box reanimates.']
       ]
     },
     game: {
@@ -58,22 +58,14 @@ const { init, listen } = Store({
       return { viewport: { ...viewport, width, height, scale } }
     },
 
-    initscene: ({ scene, viewport }) => {
-      const [speaker, content] = script.index
-      const boxwidth = Math.min(200, viewport.width - 8)
-      const write = TextBox(speaker, content, boxwidth)
-      const textbox = write()
-      return {}
-    },
-
     // advance(state)
     // skips the writing phase if writing
     // otherwise, tries to go to the next page
     // if no next page exists, does nothing
     advance: ({ scene }) => {
       if (!scene.script[scene.index + 1]) return { scene }
-      if (scene.writing) return { scene: { ...scene, writing: false } }
-      return { scene: { ...scene, index: scene.index + 1 } }
+      // if (scene.writing) return { scene: { ...scene, writing: false } }
+      return { scene: { ...scene, writing: true, index: scene.index + 1 } }
     }
   }
 })
@@ -81,6 +73,5 @@ const { init, listen } = Store({
 init(async (state, dispatch) => {
   await load('./sprites.png')
   dispatch('resize')
-  window.addEventListener('resize', _ => dispatch('resize'))
-  initview(state, dispatch)
+  initview(state, dispatch, listen)
 })

@@ -1,5 +1,9 @@
 export default function Store ({ state, actions }) {
-  const listeners = []
+  const listeners = { '*': [] }
+  for (const cmdname in actions) {
+    listeners[cmdname] = []
+  }
+
   const patches = /* JSON.parse(window.localStorage.patches || null) || */ []
   if (patches.length) {
     state = revert(state, patches)
@@ -11,8 +15,12 @@ export default function Store ({ state, actions }) {
     fn(state, dispatch)
   }
 
-  const listen = (fn) => {
-    listeners.push(fn)
+  const listen = (cmdname, fn) => {
+    if (!listeners[cmdname]) {
+      throw new Error('Failed to listen for action ' + cmdname + ':' +
+        'Action has not been defined')
+    }
+    listeners[cmdname].push(fn)
   }
 
   const dispatch = (cmdname, ...cmdargs) => {
@@ -25,7 +33,8 @@ export default function Store ({ state, actions }) {
     Object.assign(state, patch)
     patches.push(patch)
     // window.localStorage.patches = JSON.stringify(patches) // assumes state is serializable!
-    for (const fn of listeners) {
+
+    for (const fn of listeners['*'].concat(listeners[cmdname])) {
       fn(state, dispatch)
     }
     return patch
