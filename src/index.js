@@ -1,7 +1,11 @@
 import Store from './lib/store'
-import TextBox from './render/textbox'
 import { render } from './render'
-import { load } from './sprites'
+import { load, icons, palette } from './sprites'
+
+import { copy } from './lib/canvas'
+import recolor from './lib/canvas-recolor'
+import vshadow from './lib/style-vshadow'
+import TextBox from './render/textbox'
 
 const units = [
   { name: 'Chorizo', cell: [2, 7], faction: 'player' },
@@ -59,14 +63,36 @@ init(async (state, dispatch) => {
   window.addEventListener('resize', _ => dispatch('resize'))
 
   setTimeout(_ => {
-    const width = Math.min(240, state.viewport.width - 8)
-    const draw = TextBox('Jimbo', 'Pee pee poo poo', width)
-    const textbox = draw()
+    const boxwidth = Math.min(200, state.viewport.width - 8)
+    const write = TextBox('Jimbo', 'Here\'s some long text that displays on two lines.', boxwidth)
+    const textbox = write()
     document.querySelector('main').appendChild(textbox)
+
+    // draw a black arrow with a brown shadow
+    const arrow = vshadow(recolor(copy(icons.arrow).canvas, palette.jet), palette.taupe)
+
+    // arrow mask for clearing previous draws
+    const mask = recolor(copy(arrow).canvas, palette.beige)
+
+    let offset = 0
+    let time = 0
+    let writing = true
     textbox.addEventListener('animationend', function update () {
-      if (draw()) {
-        window.requestAnimationFrame(update)
+      if (writing) {
+        writing = write()
+      } else {
+        const ctx = textbox.getContext('2d')
+        const x = textbox.width - 16
+        const y = textbox.height - 17
+        const a = 0.6 // amplitude
+        const d = 30 // cycle duration
+        const t = time % d / d // time percentage
+        ctx.drawImage(mask, x, y + offset)
+        offset = Math.round(Math.sin(t * 2 * Math.PI) * a)
+        ctx.drawImage(arrow, x, y + offset)
       }
+      time++
+      window.requestAnimationFrame(update)
     })
   }, 500)
 })

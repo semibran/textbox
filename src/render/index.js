@@ -17,7 +17,7 @@ export const render = (state, dispatch) => {
     canvas: {
       position: 'absolute',
       bottom: 0,
-      margin: '4px'
+      margin: '4px 0'
     }
   })
   patch($main, view(state, dispatch))
