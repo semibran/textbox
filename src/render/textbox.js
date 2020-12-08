@@ -17,18 +17,10 @@ export default function TextBox (name, content, width) {
   const height = (font.data.cellheight + font.data.linespace) * 2 + ypad * 2
   const box = Box(width - 2, height - 2)
   const tag = Tag(name)
-  // const texts = lines.map(line => Text(line, style))
-
   const textbox = Canvas(width, height + tag.height - tagoffset)
   textbox.drawImage(box, 0, tag.height - tagoffset)
   textbox.drawImage(recolor(copy(tag).canvas, palette.taupe), 6, 1)
   textbox.drawImage(tag, 6, 0)
-
-  // let y = tag.height - 2 + ypad
-  // for (const text of texts) {
-  //   textbox.drawImage(text, xpad, y)
-  //   y += font.cellheight + font.linespace
-  // }
 
   let i = -1
   let x = xpad

@@ -1,6 +1,6 @@
 import Store from './lib/store'
 import { render, init as initview } from './view'
-import { load, icons, palette } from './sprites'
+import { load } from './sprites'
 
 const units = [
   { name: 'Chorizo', cell: [2, 7], faction: 'player' },
@@ -54,6 +54,7 @@ const { init, listen } = Store({
       const height = Math.ceil(window.innerHeight / scale)
       return { viewport: { ...viewport, width, height, scale } }
     },
+
     click: (_, dispatch) => {
       dispatch('advance')
     },
@@ -85,5 +86,4 @@ init(async (state, dispatch) => {
   dispatch('resize')
   window.addEventListener('resize', _ => dispatch('resize'))
   initview(state, dispatch)
-  listen(render)
 })
