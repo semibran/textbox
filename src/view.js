@@ -100,7 +100,7 @@ function onadvance ({ scene }) {
       $textbox.classList.remove('-exit')
 
       const speaker = scene.actors[id]
-      textbox.rename(speaker)
+      textbox.rename(speaker, 'right')
       textbox.load(content)
 
       $textbox.classList.add('-enter')

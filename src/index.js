@@ -17,9 +17,10 @@ const { init, listen } = Store({
       done: false,
       actors: ['???', 'Dodo'],
       script: [
-        [0, 'Hi! Let\'s write some text.'],
+        [0, 'Hi! Let\'s draw some text.'],
         [0, 'Here\'s some long text that displays on two lines.'],
-        [1, 'When someone else talks, the text box reanimates.']
+        [1, 'When someone else talks, the text box reanimates.'],
+        [1, 'The speaker\'s name is also drawn on the other side.']
       ]
     },
     game: {
