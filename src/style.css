@@ -12,7 +12,10 @@ main {
   image-rendering: pixelated;
 }
 
-canvas {
+.textbox {
+  margin: 4px 0;
+  position: absolute;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   animation: slideup 0.25s;

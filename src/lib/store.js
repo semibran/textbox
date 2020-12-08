@@ -1,6 +1,6 @@
 export default function Store ({ state, actions }) {
   const listeners = []
-  const patches = JSON.parse(window.localStorage.patches || null) || []
+  const patches = /* JSON.parse(window.localStorage.patches || null) || */ []
   if (patches.length) {
     state = revert(state, patches)
   } else {
@@ -21,10 +21,10 @@ export default function Store ({ state, actions }) {
       throw new Error('Failed to dispatch command:' +
         ' No corresponding action found for command ' + cmdname)
     }
-    const patch = action(state, ...cmdargs)
+    const patch = action(state, dispatch, cmdargs)
     Object.assign(state, patch)
     patches.push(patch)
-    window.localStorage.patches = JSON.stringify(patches) // assumes state is serializable!
+    // window.localStorage.patches = JSON.stringify(patches) // assumes state is serializable!
     for (const fn of listeners) {
       fn(state, dispatch)
     }

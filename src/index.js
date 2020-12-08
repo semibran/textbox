@@ -1,11 +1,6 @@
 import Store from './lib/store'
-import { render } from './render'
+import { render, init as initview } from './view'
 import { load, icons, palette } from './sprites'
-
-import { copy } from './lib/canvas'
-import recolor from './lib/canvas-recolor'
-import vshadow from './lib/style-vshadow'
-import TextBox from './render/textbox'
 
 const units = [
   { name: 'Chorizo', cell: [2, 7], faction: 'player' },
@@ -14,12 +9,16 @@ const units = [
 
 const { init, listen } = Store({
   state: {
+    time: 0,
     screen: 'game',
     scene: {
       index: 0,
-      actors: ['Jimbo'],
+      writing: false,
+      done: false,
+      actors: ['???'],
       script: [
-        [0, 'helo..... Gamer\'s....']
+        [0, 'Hi! Let\'s write some text.'],
+        [0, 'Here\'s some long text that displays on two lines.']
       ]
     },
     game: {
@@ -41,8 +40,10 @@ const { init, listen } = Store({
     }
   },
   actions: {
-    switchscr: (state, newscr) =>
-      ({ page: newscr }),
+    update: (state) =>
+      ({ ...state, time: state.time + 1 }),
+    switchscr: (state, _, [newscr]) =>
+      ({ screen: newscr }),
     resize: ({ viewport }) => {
       const minhscale = Math.floor(window.innerWidth / viewport.native.width)
       const minvscale = Math.floor(window.innerHeight / viewport.native.height)
@@ -52,47 +53,37 @@ const { init, listen } = Store({
       const width = Math.ceil(window.innerWidth / scale)
       const height = Math.ceil(window.innerHeight / scale)
       return { viewport: { ...viewport, width, height, scale } }
+    },
+    click: (_, dispatch) => {
+      dispatch('advance')
+    },
+
+    initscene: ({ scene, viewport }) => {
+      const [speaker, content] = script.index
+      const boxwidth = Math.min(200, viewport.width - 8)
+      const write = TextBox(speaker, content, boxwidth)
+      const textbox = write()
+      return {}
+    },
+
+    // advance(state)
+    // skips the writing phase if writing
+    // otherwise, tries to go to the next page
+    // if no next page exists, does nothing
+    advance: ({ scene }) => {
+      const next = scene.script[scene.index + 1]
+      if (!next) return { scene }
+      if (scene.writing && next) return { scene: { ...scene, writing: false } }
+      if (scene.writing) return { scene: { ...scene, writing: false, done: true } }
+      return { scene: { ...scene, index: scene.index + 1 } }
     }
   }
 })
 
 init(async (state, dispatch) => {
   await load('./sprites.png')
-  listen(render)
   dispatch('resize')
   window.addEventListener('resize', _ => dispatch('resize'))
-
-  setTimeout(_ => {
-    const boxwidth = Math.min(200, state.viewport.width - 8)
-    const write = TextBox('Jimbo', 'Here\'s some long text that displays on two lines.', boxwidth)
-    const textbox = write()
-    document.querySelector('main').appendChild(textbox)
-
-    // draw a black arrow with a brown shadow
-    const arrow = vshadow(recolor(copy(icons.arrow).canvas, palette.jet), palette.taupe)
-
-    // arrow mask for clearing previous draws
-    const mask = recolor(copy(arrow).canvas, palette.beige)
-
-    let offset = 0
-    let time = 0
-    let writing = true
-    textbox.addEventListener('animationend', function update () {
-      if (writing) {
-        writing = write()
-      } else {
-        const ctx = textbox.getContext('2d')
-        const x = textbox.width - 16
-        const y = textbox.height - 17
-        const a = 0.6 // amplitude
-        const d = 30 // cycle duration
-        const t = time % d / d // time percentage
-        ctx.drawImage(mask, x, y + offset)
-        offset = Math.round(Math.sin(t * 2 * Math.PI) * a)
-        ctx.drawImage(arrow, x, y + offset)
-      }
-      time++
-      window.requestAnimationFrame(update)
-    })
-  }, 500)
+  initview(state, dispatch)
+  listen(render)
 })
