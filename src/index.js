@@ -15,12 +15,18 @@ const { init, listen } = Store({
       index: 0,
       writing: true,
       done: false,
-      actors: ['???', 'Dodo'],
+      actors: [
+        { name: 'Dodo', side: 'left' },
+        { name: '???', side: 'right' },
+        { name: '???', side: 'left' }
+      ],
       script: [
         [0, 'Hi! Let\'s draw some text.'],
         [0, 'Here\'s some long text that displays on two lines.'],
         [1, 'When someone else talks, the text box reanimates.'],
-        [1, 'The speaker\'s name is also drawn on the other side.']
+        [1, 'An actor\'s name can be drawn on either side.'],
+        [2, 'Each actor also has its own ID.'],
+        [2, 'This way, different actors can have the same name.']
       ]
     },
     game: {

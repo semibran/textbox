@@ -50,7 +50,7 @@ export function init (state, dispatch, listen) {
   const [id, content] = scene.script[scene.index]
   const speaker = scene.actors[id]
   const boxwidth = Math.min(200, viewport.width - 8)
-  textbox = TextBox(speaker, content, boxwidth)
+  textbox = TextBox(speaker.name, content, boxwidth)
   textbox.canvas.className = 'textbox'
   speakerid = id
 
@@ -100,7 +100,7 @@ function onadvance ({ scene }) {
       $textbox.classList.remove('-exit')
 
       const speaker = scene.actors[id]
-      textbox.rename(speaker, 'right')
+      textbox.rename(speaker.name, speaker.side)
       textbox.load(content)
 
       $textbox.classList.add('-enter')
