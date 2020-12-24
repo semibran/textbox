@@ -3,37 +3,11 @@
 }
 
 body {
+  background: black;
   overflow: hidden;
 }
 
-main {
-  background: black;
+canvas {
   transform-origin: top left;
   image-rendering: pixelated;
-}
-
-.textbox {
-  padding: 4px 0;
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.textbox.-enter {
-  animation: slidein 0.5s;
-}
-
-.textbox.-exit {
-  animation: slideout 0.25s ease-in;
-}
-
-@keyframes slidein {
-  from { transform: translate(-50%, 100%); }
-  to { transform: translate(-50%, 0); }
-}
-
-@keyframes slideout {
-  from { transform: translate(-50%, 0); }
-  to { transform: translate(-50%, 100%); }
 }
