@@ -25,10 +25,10 @@ const script = Script(scenedata)
     const ctx = canvas.getContext('2d')
     for (const node of nodes) {
       const bounds = bbox(node)
-      const x = Math.round(bounds.left) - 2
-      const y = Math.round(bounds.top) - 2
-      const width = Math.round(bounds.width) + 4
-      const height = Math.round(bounds.height) + 4
+      const x = Math.round(bounds.left)
+      const y = Math.round(bounds.top)
+      const width = Math.round(bounds.width)
+      const height = Math.round(bounds.height)
       ctx.clearRect(x, y, width, height)
     }
     nodes = scene.render()

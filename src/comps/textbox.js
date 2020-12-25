@@ -41,6 +41,7 @@ let writex = 0
 let writey = 0
 let row = 0
 let col = 0
+let y = 0
 
 function load (script) {
   _script = script
@@ -85,9 +86,9 @@ function init () {
 
 function update () {
   if (anim) {
-    const y = anim()
-    if (y !== -1) {
-      node.y = lerp(vh + ctx.canvas.height, vh - margin, y)
+    const t = anim()
+    if (t !== -1) {
+      y = lerp(vh + ctx.canvas.height, vh - margin, t)
     } else {
       anim = null
     }
@@ -115,6 +116,7 @@ function render () {
   }
 
   node.image = ctx.canvas
+  node.y = y
   return node
 }
 
