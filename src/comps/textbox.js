@@ -56,8 +56,7 @@ function loadLine (_line) {
   resetPointer()
 
   if (inited) {
-    ctx.fillStyle = rgb(...palette.beige)
-    ctx.fillRect(padx, pady + tagy + 1, width - padx * 2, height - pady * 2 + 1)
+    rename(line.speaker.name, line.speaker.side)
     lines = split(line.content, font.data, width - padx * 2)
   }
 }
