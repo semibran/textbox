@@ -31,6 +31,7 @@ let font = null
 let charmap = null
 let shadowmap = null
 let arrow = null
+let arrowy = 0
 let _script = null
 let _line = null
 let lines = null
@@ -42,6 +43,7 @@ let writey = 0
 let row = 0
 let col = 0
 let y = 0
+let time = 0
 
 function load (script) {
   _script = script
@@ -110,9 +112,22 @@ function render () {
     resetPointer()
   }
 
+  time++
   while (writeidx < charidx) {
     write()
     writeidx++
+  }
+
+  if (charidx === _line.content.length - 1) {
+    const x = ctx.canvas.width - 16
+    const y = ctx.canvas.height - 16
+    const a = 1 // amplitude
+    const d = 45 // cycle duration
+    const t = time % d / d // time percentage
+    ctx.fillStyle = rgb(...palette.beige)
+    ctx.fillRect(x, y + arrowy, arrow.width, arrow.height)
+    arrowy = Math.round(Math.sin(t * 2 * Math.PI) * a)
+    ctx.drawImage(arrow, x, y + arrowy)
   }
 
   node.image = ctx.canvas
@@ -138,12 +153,14 @@ function write () {
       writex += image.width + font.data.charspace
     }
   }
+
   if (++col > lines[row].length) {
     writex = padx
     writey += font.data.cellheight + font.data.linespace
     col = 0
     row++
   }
+
   return true
 }
 

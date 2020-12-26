@@ -20,7 +20,7 @@ const script = Script(scenedata)
     canvas.style.transform = `scale(${scale})`
   })
 
-  let nodes = []
+  let nodes = [] // node cache for clearing previous render
   setTimeout(function update () {
     const ctx = canvas.getContext('2d')
     for (const node of nodes) {

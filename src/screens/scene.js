@@ -1,4 +1,3 @@
-import { width as vw, height as vh } from '../viewport'
 import * as textbox from '../comps/textbox'
 
 export default function Scene (script) {
