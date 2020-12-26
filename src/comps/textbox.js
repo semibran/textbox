@@ -11,7 +11,7 @@ import rgb from '../lib/rgb'
 import Box from '../render/box'
 import Tag from '../render/tag'
 
-export { load, render, update }
+export { load, render, update, next }
 
 const margin = 8
 const padx = 9
@@ -25,15 +25,14 @@ let height = 0
 let tag = null
 let box = null
 let ctx = null
-let node = null
 let anim = null
 let font = null
 let charmap = null
 let shadowmap = null
 let arrow = null
 let arrowy = 0
-let _script = null
-let _line = null
+let script = null
+let line = null
 let lines = null
 let lineidx = 0
 let charidx = 0
@@ -45,16 +44,22 @@ let col = 0
 let y = 0
 let time = 0
 
-function load (script) {
-  _script = script
+function load (_script) {
+  script = _script
   lineidx = 0
   loadLine(script[0])
 }
 
-function loadLine (line) {
-  _line = line
+function loadLine (_line) {
+  line = _line
   charidx = -1
   resetPointer()
+
+  if (inited) {
+    ctx.fillStyle = rgb(...palette.beige)
+    ctx.fillRect(padx, pady + tagy + 1, width - padx * 2, height - pady * 2 + 1)
+    lines = split(line.content, font.data, width - padx * 2)
+  }
 }
 
 function resetPointer () {
@@ -77,26 +82,6 @@ function init () {
       palette.jet
     ), palette.taupe)
   anim = EaseOut(30)
-  node = {
-    image: null,
-    layer: 'ui',
-    origin: 'bottom',
-    x: 0,
-    y: 0
-  }
-}
-
-function update () {
-  if (anim) {
-    const t = anim()
-    if (t !== -1) {
-      y = lerp(vh + ctx.canvas.height, vh - margin, t)
-    } else {
-      anim = null
-    }
-  } else if (charidx < _line.content.length - 1) {
-    charidx++
-  }
 }
 
 function render () {
@@ -104,21 +89,20 @@ function render () {
   const w = vw - margin * 2
   if (width !== w) {
     width = w
+    y = vh - margin
     box = Box(width - 2, height - 2)
     ctx = Canvas(width, height + tagy)
-    node.x = vw / 2
-    lines = split(_line.content, font.data, width - padx * 2)
-    rename(_line.speaker.name, _line.speaker.side)
+    lines = split(line.content, font.data, width - padx * 2)
+    rename(line.speaker.name, line.speaker.side)
     resetPointer()
   }
 
-  time++
-  while (writeidx < charidx) {
-    write()
-    writeidx++
-  }
-
-  if (charidx === _line.content.length - 1) {
+  if (writeidx < line.content.length - 1) {
+    while (writeidx < charidx) {
+      write()
+      writeidx++
+    }
+  } else {
     const x = ctx.canvas.width - 16
     const y = ctx.canvas.height - 16
     const a = 1 // amplitude
@@ -130,9 +114,38 @@ function render () {
     ctx.drawImage(arrow, x, y + arrowy)
   }
 
-  node.image = ctx.canvas
-  node.y = y
-  return node
+  return {
+    image: ctx.canvas,
+    layer: 'ui',
+    origin: 'bottom',
+    x: vw / 2,
+    y: y
+  }
+}
+
+function next () {
+  const linelen = line.content.length - 1
+  if (charidx < linelen) {
+    charidx = linelen
+  } else if (lineidx < script.length - 1) {
+    console.log(lineidx, script.length - 1)
+    loadLine(script[++lineidx])
+  }
+}
+
+function update () {
+  if (anim) {
+    const t = anim()
+    if (t !== -1) {
+      y = lerp(vh + ctx.canvas.height, vh - margin, t)
+    } else {
+      anim = null
+    }
+  } else if (charidx < line.content.length - 1) {
+    charidx++
+  } else {
+    time++
+  }
 }
 
 function write () {
@@ -154,7 +167,7 @@ function write () {
     }
   }
 
-  if (++col > lines[row].length) {
+  if (++col === lines[row].length && row < lines.length - 1) {
     writex = padx
     writey += font.data.cellheight + font.data.linespace
     col = 0
@@ -174,24 +187,3 @@ function rename (name, side = 'left') {
   ctx.drawImage(box, 0, tagy)
   ctx.drawImage(tag, x, 0)
 }
-
-// export default function TextBox (script) {
-
-  // function update () {
-  //   const ctx = textbox.canvas.getContext('2d')
-  //   const x = textbox.canvas.width - 16
-  //   const y = textbox.canvas.height - 16
-  //   const a = 1 // amplitude
-  //   const d = 45 // cycle duration
-  //   const t = time % d / d // time percentage
-  //   ctx.fillStyle = rgb(...palette.beige)
-  //   ctx.fillRect(x, y + offset)
-  //   offset = Math.round(Math.sin(t * 2 * Math.PI) * a)
-  //   ctx.drawImage(arrow, x, y + offset)
-  // }
-
-//   function clear () {
-//     ctx.fillStyle = rgb(...palette.beige)
-//     ctx.fillRect(padx, pady + tagy + 1, width - padx * 2, height - pady * 2 + 1)
-//   }
-// }

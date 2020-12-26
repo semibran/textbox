@@ -20,6 +20,10 @@ const script = Script(scenedata)
     canvas.style.transform = `scale(${scale})`
   })
 
+  window.addEventListener('click', (evt) => {
+    scene.click()
+  })
+
   let nodes = [] // node cache for clearing previous render
   setTimeout(function update () {
     const ctx = canvas.getContext('2d')
