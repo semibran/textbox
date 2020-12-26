@@ -3,6 +3,7 @@ import { width as vw, height as vh } from '../viewport'
 import { get as getCharmap } from '../disasm/charmap'
 import { create as Canvas, copy } from '../lib/canvas'
 import lerp from 'lerp'
+import EaseIn from '../anims/ease-in'
 import EaseOut from '../anims/ease-out'
 import recolor from '../lib/canvas-recolor'
 import vshadow from '../lib/style-vshadow'
@@ -19,19 +20,20 @@ const pady = 8
 const tagx = 6
 const tagy = 8
 
+const anims = []
 let inited = false
 let width = 0
 let height = 0
 let tag = null
 let box = null
 let ctx = null
-let anim = null
 let font = null
 let charmap = null
 let shadowmap = null
 let arrow = null
 let arrowy = 0
 let script = null
+let speaker = null
 let line = null
 let lines = null
 let lineidx = 0
@@ -56,8 +58,26 @@ function loadLine (_line) {
   resetPointer()
 
   if (inited) {
-    rename(line.speaker.name, line.speaker.side)
     lines = split(line.content, font.data, width - padx * 2)
+  }
+
+  if (line.speaker !== speaker) {
+    const enter = EaseOut(20, { type: 'enter' })
+    if (inited) {
+      const exit = EaseIn(15, { type: 'exit' })
+      anims.push(exit, enter)
+    } else {
+      anims.push(enter)
+    }
+  } else {
+    clear()
+  }
+}
+
+function onanimend (anim) {
+  if (line.speaker !== speaker) {
+    speaker = line.speaker
+    rename(line.speaker.name, line.speaker.side)
   }
 }
 
@@ -80,7 +100,6 @@ function init () {
       copy(icons.arrow).canvas,
       palette.jet
     ), palette.taupe)
-  anim = EaseOut(30)
 }
 
 function render () {
@@ -123,22 +142,29 @@ function render () {
 }
 
 function next () {
+  if (anims.length) return
   const linelen = line.content.length - 1
   if (charidx < linelen) {
     charidx = linelen
   } else if (lineidx < script.length - 1) {
-    console.log(lineidx, script.length - 1)
     loadLine(script[++lineidx])
   }
 }
 
 function update () {
+  const anim = anims[0]
   if (anim) {
     const t = anim()
     if (t !== -1) {
-      y = lerp(vh + ctx.canvas.height, vh - margin, t)
+      const starty = vh + ctx.canvas.height
+      const endy = vh - margin
+      if (anim.data.type === 'enter') {
+        y = lerp(starty, endy, t)
+      } else if (anim.data.type === 'exit') {
+        y = lerp(endy, starty, t)
+      }
     } else {
-      anim = null
+      onanimend(anims.shift())
     }
   } else if (charidx < line.content.length - 1) {
     charidx++
@@ -185,4 +211,9 @@ function rename (name, side = 'left') {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   ctx.drawImage(box, 0, tagy)
   ctx.drawImage(tag, x, 0)
+}
+
+function clear () {
+  ctx.fillStyle = rgb(...palette.beige)
+  ctx.fillRect(padx, pady + tagy + 1, width - padx * 2, height - pady * 2 + 1)
 }
