@@ -15,7 +15,7 @@ all: clean sprites css
 	html-minifier --collapse-whitespace src/index.html -o dist/index.html
 
 watch: clean sprites js css html
-	chokidar "src/**/*.js" -c "make js" \
+	chokidar "src/**/*.js" "src/**/*.json" -c "make js" \
 	& chokidar "src/**/*.css" -c "make css" \
 	& chokidar "src/**/*.html" -c "make html" \
 	& chokidar "src/**/*.png" -c "make sprites js"

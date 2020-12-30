@@ -37,6 +37,6 @@ module.exports = {
     'UVWXYZ,.!?',
     'abcdefghij',
     'klmnopqrst',
-    'uvwxyz\'()'
+    'uvwxyz\'"()'
   ]
 }

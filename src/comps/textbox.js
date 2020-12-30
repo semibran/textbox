@@ -2,9 +2,9 @@ import { fonts, icons, palette } from '../sprites'
 import { width as vw, height as vh } from '../viewport'
 import { get as getCharmap } from '../disasm/charmap'
 import { create as Canvas, copy } from '../lib/canvas'
+import { easeIn, easeOut } from '../lib/ease-expo'
+import Ease from '../anims/ease'
 import lerp from 'lerp'
-import EaseIn from '../anims/ease-in'
-import EaseOut from '../anims/ease-out'
 import recolor from '../lib/canvas-recolor'
 import vshadow from '../lib/style-vshadow'
 import split from '../lib/text-split'
@@ -62,9 +62,9 @@ function loadLine (_line) {
   }
 
   if (line.speaker !== speaker) {
-    const enter = EaseOut(20, { type: 'enter' })
+    const enter = Ease(easeOut, 20, { type: 'enter' })
     if (inited) {
-      const exit = EaseIn(15, { type: 'exit' })
+      const exit = Ease(easeIn, 15, { type: 'exit' })
       anims.push(exit, enter)
     } else {
       anims.push(enter)
@@ -154,7 +154,7 @@ function next () {
 function update () {
   const anim = anims[0]
   if (anim) {
-    const t = anim()
+    const t = anim.update()
     if (t !== -1) {
       const starty = vh + ctx.canvas.height
       const endy = vh - margin
